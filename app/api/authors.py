@@ -22,14 +22,20 @@ def update_author(
     author: schemas.AuthorCreate,
     db: Session = Depends(get_db)
 ):
-    updated_author = crud.update_author(db, author_id, author)
-    if not updated_author:
-        raise HTTPException(status_code=404, detail="Author not found")
-    return updated_author
+    db_author = crud.get_author(db, author_id=author_id)
+    if not db_author:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Author not found"
+        )
+    return crud.update_author(db=db, author_id=author_id, author=author)
 
-@router.delete("/{author_id}")
+@router.delete("/{author_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_author(author_id: int, db: Session = Depends(get_db)):
-    author = crud.delete_author(db, author_id)
-    if not author:
-        raise HTTPException(status_code=404, detail="Author not found")
-    return {"message": "Author deleted"}
+    db_author = crud.delete_author(db, author_id=author_id)
+    if not db_author:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Author not found"
+        )
+    return

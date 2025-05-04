@@ -4,6 +4,16 @@ from app.database import SessionLocal
 
 client = TestClient(app)
 
+def test_create_book_unauthorized():
+    response = client.post("/api/books/", json={
+        "title": "Unauthorized Book",
+        "author_id": 1
+    })
+    assert response.status_code == 401
+
+def test_get_nonexistent_book():
+    response = client.get("/api/books/9999")
+    assert response.status_code == 404
 
 def test_full_flow():
     # Регистрация пользователя

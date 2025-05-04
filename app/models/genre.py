@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String, Table
-from database import Base
+from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
+from app.database import Base
 
 book_genre = Table(
     "book_genre",

@@ -2,13 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.models import book, author, genre, user, review  # noqa: F401
-from app.api import (
-    books_router,
-    authors_router,
-    genres_router,
-    auth_router,
-    reviews_router
-)
+
+from app.api.books import router as books_router
+from app.api.authors import router as authors_router
+from app.api.genres import router as genres_router
+from app.api.auth import router as auth_router
+from app.api.reviews import router as reviews_router
 
 Base.metadata.create_all(bind=engine)
 
