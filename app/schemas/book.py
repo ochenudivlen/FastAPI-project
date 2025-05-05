@@ -13,7 +13,11 @@ class BookBase(BaseModel):
             raise ValueError('Publication year cannot be in the future')
         return v
 
+class BookCreate(BookBase):
+    pass
+
 class Book(BookBase):
     id: int
     class Config:
         from_attributes = True
+        exclude = {"genres", "reviews"}

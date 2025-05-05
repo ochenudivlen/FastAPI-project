@@ -5,6 +5,9 @@ class ReviewBase(BaseModel):
     comment: str | None = None
     book_id: int
 
+class ReviewCreate(ReviewBase):
+    pass
+
 class Review(ReviewBase):
     id: int
     user_id: int
