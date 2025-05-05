@@ -1,21 +1,38 @@
+"""
+Набор интеграционных тестов для проверки работоспособности API.
+"""
+
 from fastapi.testclient import TestClient
 from app.main import app
 from app.database import SessionLocal
 
 client = TestClient(app)
+session = SessionLocal()
+
 
 def test_create_book_unauthorized():
+    """
+    Тест на создание книги без авторизации.
+    """
     response = client.post("/api/books/", json={
         "title": "Unauthorized Book",
         "author_id": 1
     })
     assert response.status_code == 401
 
+
 def test_get_nonexistent_book():
+    """
+    Тест на получение несуществующей книги.
+    """
     response = client.get("/api/books/9999")
     assert response.status_code == 404
 
+
 def test_full_flow():
+    """
+    Интеграционный тест полного цикла действий: регистрация → авторизация → создание → отзыв.
+    """
     # Регистрация пользователя
     user_data = {
         "username": "testuser",
@@ -69,4 +86,4 @@ def test_full_flow():
     # Проверка рейтинга
     response = client.get(f"/books/top-rated/")
     assert response.status_code == 200
-    assert any(b["id"] == book_id for b in response.json())
+    assert any(book["id"] == book_id for book in response.json())

@@ -1,37 +1,73 @@
-from pydantic import BaseModel, EmailStr, field_validator
-from typing import Optional
+"""
+Модуль схем пользователей (User) приложения.
+"""
 
-class UserBase(BaseModel):
+from typing import Optional
+from pydantic import BaseModel, EmailStr, field_validator
+
+
+class UserBase(BaseModel):      # pylint: disable=too-few-public-methods
+    """
+    Базовая схема пользователя.
+    """
     username: str
     email: EmailStr
 
-class UserCreate(UserBase):
+
+class UserCreate(UserBase):     # pylint: disable=too-few-public-methods
+    """
+    Схема для создания нового пользователя.
+    """
     password: str
 
     @field_validator('password')
-    def validate_password(cls, v):
-        if len(v) < 8:
-            raise ValueError("Password must be at least 8 characters")
-        if not any(c.isupper() for c in v):
-            raise ValueError("Password must contain at least one uppercase letter")
-        if not any(c.isdigit() for c in v):
-            raise ValueError("Password must contain at least one digit")
-        return v
+    def validate_password(cls, value: str) -> str:
+        """
+        Валидатор пароля.
 
-class UserUpdate(BaseModel):
+        Проверяет длину пароля, наличие прописных букв и цифр.
+        """
+        if len(value) < 8:
+            raise ValueError("Пароль должен быть минимум 8 символов.")
+        if not any(char.isupper() for char in value):
+            raise ValueError("Пароль должен содержать хотя бы одну прописную букву.")
+        if not any(char.isdigit() for char in value):
+            raise ValueError("Пароль должен содержать хотя бы одну цифру.")
+        return value
+
+
+class UserUpdate(BaseModel):        # pylint: disable=too-few-public-methods
+    """
+    Схема для обновления профиля пользователя.
+    """
     email: Optional[EmailStr] = None
     password: Optional[str] = None
 
-class User(UserBase):
+
+class User(UserBase):       # pylint: disable=too-few-public-methods
+    """
+    Полная схема пользователя.
+    """
     id: int
     is_active: Optional[bool] = None
 
-    class Config:
+    class Config:       # pylint: disable=too-few-public-methods
+        """
+        Конфигурация модели Pydantic.
+        """
         from_attributes = True
 
-class UserInDB(User):
+
+class UserInDB(User):       # pylint: disable=too-few-public-methods
+    """
+    Внутренняя схема пользователя с хешированным паролем.
+    """
     hashed_password: str
 
-class Token(BaseModel):
+
+class Token(BaseModel):     # pylint: disable=too-few-public-methods
+    """
+    Схема токена аутентификации.
+    """
     access_token: str
     token_type: str

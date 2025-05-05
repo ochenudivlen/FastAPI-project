@@ -1,3 +1,7 @@
+"""
+Маркер, который сообщает интерпретатору, что каталог содержит код для модуля Python.
+"""
+
 from .book import Book
 from .author import Author
 from .genre import Genre

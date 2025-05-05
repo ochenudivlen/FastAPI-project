@@ -6,7 +6,6 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.dependencies import get_current_user
 from app.database import get_db
 from app import crud, schemas
 
@@ -17,7 +16,6 @@ router = APIRouter(prefix="/genres", tags=["genres"])
 def create_genre(
     genre: schemas.GenreCreate,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(get_current_user),
 ):
     """
     Создает новый жанр в базе данных.
@@ -91,7 +89,6 @@ def read_genre(
 def delete_genre(
     genre_id: int,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(get_current_user),
 ) -> None:
     """
     Удаляет жанр из базы данных.

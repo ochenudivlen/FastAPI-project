@@ -6,8 +6,8 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.dependencies import get_db, get_current_user
-from app import crud, schemas, models
+from app.dependencies import get_db
+from app import crud, schemas
 
 router = APIRouter(prefix="/reviews", tags=["reviews"])
 
@@ -16,7 +16,6 @@ router = APIRouter(prefix="/reviews", tags=["reviews"])
 def create_review(
     review: schemas.ReviewCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
 ) -> schemas.Review:
     """
     Создает новый отзыв о книге.

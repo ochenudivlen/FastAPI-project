@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from app.dependencies import get_db, get_current_user
+from app.dependencies import get_db
 from app import crud, schemas
 from app.models.book import Book
 from app.models.review import Review
@@ -85,7 +85,6 @@ def get_top_rated_books(
 def create_book(
         book: schemas.BookCreate,
         db: Annotated[Session, Depends(get_db)],
-        current_user: Annotated[schemas.User, Depends(get_current_user)]
 ) -> schemas.Book:
     """Создание новой книги в каталоге
 
@@ -115,66 +114,3 @@ def create_book(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Книга с таким ISBN уже существует"
         ) from e
-
-
-@router.put(
-    "/{book_id}",
-    response_model=schemas.Book,
-    summary="Обновить информацию о книге"
-)
-def update_book(
-        book_id: int,
-        book_data: schemas.BookCreate,
-        db: Annotated[Session, Depends(get_db)],
-        current_user: Annotated[schemas.User, Depends(get_current_user)]
-) -> schemas.Book:
-    """Обновление информации о существующей книге
-
-    Args:
-        book_id: Идентификатор книги
-        book_data: Новые данные книги
-        db: Сессия базы данных
-        current_user: Текущий аутентифицированный пользователь
-
-    Returns:
-        schemas.Book: Обновленные данные книги
-
-    Raises:
-        HTTPException: 404 Если книга не найдена
-    """
-    db_book = crud.get_book(db, book_id)
-    if not db_book:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Книга не найдена"
-        )
-    return crud.update_book(db, book_id, book_data)
-
-
-@router.delete(
-    "/{book_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
-    summary="Удалить книгу"
-)
-def delete_book(
-        book_id: int,
-        db: Annotated[Session, Depends(get_db)],
-        current_user: Annotated[schemas.User, Depends(get_current_user)]
-) -> None:
-    """Удаление книги из каталога
-
-    Args:
-        book_id: Идентификатор книги
-        db: Сессия базы данных
-        current_user: Текущий аутентифицированный пользователь
-
-    Raises:
-        HTTPException: 404 Если книга не найдена
-    """
-    db_book = crud.get_book(db, book_id)
-    if not db_book:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Книга не найдена"
-        )
-    crud.delete_book(db, book_id)
